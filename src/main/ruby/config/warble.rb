@@ -154,7 +154,11 @@ Warbler::Config.new do |config|
   config.webserver = 'jenkins-ci.winstone'
   # config.webserver = 'jetty'
 
+  config.dirs << ".bundle"
   config.dirs << "db"
+  config.dirs << "extensions"
+  config.dirs << "locales"
+  config.includes += FileList["Gemfile.local"]
   config.excludes += FileList["tmp/cache/*"]
   config.jar_name = "../retro"
   #config.webxml.jruby.compat.version = "1.8"
