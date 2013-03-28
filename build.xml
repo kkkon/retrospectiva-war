@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="redmine-war" default="package">
+<project name="redmine-war" default="all">
 
 <property environment="env"/>
 <condition property="jruby.ver" value="${jruby.version}" else="1.6.8">
@@ -258,8 +258,11 @@
 </target>
 
 
+<condition property="need-copy-from-orgdist" value="true">
+  <available file="${basedir}/orgdist" type="dir"/>
+</condition>
 
-<target name="prepare-source">
+<target name="prepare-source" if="need-copy-from-orgdist">
   <mkdir dir="${basedir}/target/checkout"/>
   <copy todir="${basedir}/target/checkout">
     <fileset dir="${basedir}/orgdist"/>
@@ -413,35 +416,6 @@
   <antcall target="Gemfile-patch"/>
   <antcall target="Gemfile-local"/>
   <antcall target="Rakefile-patch"/>
-  <antcall target="config-database"/>
-
-  <antcall target="bundler-install"/>
-  <antcall target="warble-config"/>
-
-  <antcall target="jruby-test"/>
-
-
-  <antcall target="rake-db-setup">
-    <param name="rails.env" value="development"/>
-  </antcall>
-  <antcall target="rake-db-setup">
-    <param name="rails.env" value="production"/>
-  </antcall>
-  <antcall target="rake-db-migrate">
-    <param name="rails.env" value="development"/>
-  </antcall>
-  <antcall target="rake-db-migrate">
-    <param name="rails.env" value="production"/>
-  </antcall>
-  <antcall target="warble-war"/>
-</target>
-
-<target name="package">
-  <antcall target="prepare-source"/>
-  <antcall target="Gemfile-patch"/>
-  <antcall target="Gemfile-local"/>
-  <antcall target="Rakefile-patch"/>
-  <antcall target="script-patch"/>
   <antcall target="config-database"/>
 
   <antcall target="bundler-install"/>
