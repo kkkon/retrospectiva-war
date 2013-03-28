@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="redmine-war" default="package">
+
+<property environment="env"/>
+<condition property="jruby.ver" value="${jruby.version}" else="1.6.8">
+  <isset property="maven.plugin.classpath"/>
+</condition>
+<property name="jruby.home" value="target/JRuby/jruby-${jruby.ver}"/>
+<property name="gem.opts">--no-rdoc --no-ri</property>
+
+<property name="jruby.classname" value="org.jruby.Main"/>
+
+<pathconvert property="jruby.env.location">
+  <path location="${basedir}/${jruby.home}/bin"/>
+</pathconvert>
+<condition property="jruby.env" value="${jruby.env.location};${env.Path}" else="${jruby.env.location}:${env.PATH}">
+  <os family="windows"/>
+</condition>
+
+<condition property="jruby.classpath" value="${maven.plugin.classpath}" else="extdist/jruby-complete-${jruby.ver}.jar">
+  <isset property="maven.plugin.classpath"/>
+</condition>
+
+
+
+
+<target name="jruby-get" unless="maven.plugin.classpath">
+  <mkdir dir="extdist"/>
+  <get
+    src="http://jruby.org.s3.amazonaws.com/downloads/${jruby.ver}/jruby-complete-${jruby.ver}.jar.md5"
+    dest="extdist"
+    usetimestamp="true"
+    />
+  <get
+    src="http://jruby.org.s3.amazonaws.com/downloads/${jruby.ver}/jruby-complete-${jruby.ver}.jar"
+    dest="extdist"
+    usetimestamp="true"
+    />
+  <checksum
+    file="extdist/jruby-complete-${jruby.ver}.jar"
+    verifyProperty="jruby-get-verify"
+    />
+  <fail message="Download err. Please delete extdist/jruby-complete-${jruby.ver}.jar">
+    <condition>
+      <not>
+        <istrue value="${jruby-get-verify}"/>
+      </not>
+    </condition>
+  </fail>
+</target>
+
+<target name="jruby-extract" unless="skip.extract">
+  <delete
+    dir="target/JRuby"
+    />
+</target>
+
+
+<target name="jruby-test">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+  >
+    <arg value="--help"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+  </java>
+
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="list"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+  </java>
+
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="environment"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+  </java>
+
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="list"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="environment"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+
+
+
+
+
+<target name="install-bundler">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="bundler"/>
+    <arg value="-v=1.3.2"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="install-jruby-openssl">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="jruby-openssl"/>
+    <arg value="-v=0.7"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="install-jruby-jars">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="jruby-jars"/>
+    <arg value="-v=${jruby.ver}"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="install-jruby-rack">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="jruby-rack"/>
+    <arg value="-v=1.1.13.1"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="install-rubyzip">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="rubyzip"/>
+    <arg value="-v=0.9.9"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="install-rake">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="rake"/>
+    <arg value="-v=0.8.7"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="install-warbler" depends="install-jruby-jars,install-jruby-rack,install-rubyzip,install-rake">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="warbler"/>
+    <arg value="-v=1.3.6"/>
+    <arg value="--ignore-dependencies"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+
+
+<target name="prepare-source">
+  <mkdir dir="${basedir}/target/checkout"/>
+  <copy todir="${basedir}/target/checkout">
+    <fileset dir="${basedir}/orgdist"/>
+  </copy>
+</target>
+
+<target name="Gemfile-patch">
+  <copy  file="${basedir}/src/main/ruby/Gemfile" tofile="${basedir}/target/checkout/Gemfile" overwrite="true"/>
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    dir="${basedir}/target/checkout"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="../../script/jruby1.8.rb"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="Gemfile-local">
+  <copy  file="${basedir}/src/main/patch/Gemfile1.8.local" tofile="${basedir}/target/checkout/Gemfile.local" overwrite="true"/>
+</target>
+
+<target name="Rakefile-patch">
+  <copy  file="${basedir}/src/main/ruby/Rakefile" tofile="${basedir}/target/checkout/Rakefile" overwrite="true"/>
+</target>
+
+<target name="script-patch">
+  <copy todir="${basedir}/target/checkout/script" overwrite="true">
+    <fileset dir="${basedir}/src/main/ruby/script"/>
+  </copy>
+</target>
+
+<target name="config-database">
+  <copy  file="${basedir}/src/main/ruby/config/database.yml" todir="${basedir}/target/checkout/config/" overwrite="true"/>
+</target>
+
+<target name="bundler-install">
+  <delete file="${basedir}/target/checkout/Gemfile.lock"/>
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    dir="${basedir}/target/checkout"
+    failonerror="true"
+  >
+    <jvmarg value="-Xmx384m"/>
+    <arg value="-S"/>
+    <arg value="bundle"/>
+    <arg value="install"/>
+    <arg line="--without postgresql mysql development test"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="warble-config">
+  <delete file="${basedir}/target/checkout/config/warble.rb"/>
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    dir="${basedir}/target/checkout"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="warble"/>
+    <arg value="config"/>
+    <arg line="--trace"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+  <copy file="${basedir}/src/main/ruby/config/warble.rb" tofile="${basedir}/target/checkout/config/warble.rb" overwrite="true"/>
+</target>
+
+<target name="rake-db-setup">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    dir="${basedir}/target/checkout"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="rake"/>
+    <arg value="db:setup"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+    <env key="RAILS_ENV" value="${rails.env}"/>
+  </java>
+</target>
+
+<target name="rake-db-migrate">
+  <copy
+    file="${basedir}/src/main/ruby/db/migrate/20100907201050_add_timestamps_to_projects_and_users.rb"
+    tofile="${basedir}/target/checkout/db/migrate/20100907201050_add_timestamps_to_projects_and_users.rb"
+    overwrite="true"/>
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    dir="${basedir}/target/checkout"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="rake"/>
+    <arg value="db:migrate"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+    <env key="RAILS_ENV" value="${rails.env}"/>
+  </java>
+</target>
+
+<target name="warble-war">
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
+    fork="true"
+    dir="${basedir}/target/checkout"
+    failonerror="true"
+  >
+    <arg value="-S"/>
+    <arg value="warble"/>
+    <arg value="war"/>
+    <arg value="--trace"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
+    <env key="GEM_HOME" path="${jruby.home}"/>
+  </java>
+</target>
+
+<target name="all">
+  <antcall target="jruby-get"/>
+  <antcall target="jruby-extract"/>
+  <antcall target="jruby-test"/>
+
+  <antcall target="install-bundler"/>
+  <antcall target="install-jruby-openssl"/>
+  <antcall target="install-warbler"/>
+  <antcall target="jruby-test"/>
+
+  <antcall target="prepare-source"/>
+  <antcall target="Gemfile-patch"/>
+  <antcall target="Gemfile-local"/>
+  <antcall target="Rakefile-patch"/>
+  <antcall target="config-database"/>
+
+  <antcall target="bundler-install"/>
+  <antcall target="warble-config"/>
+
+  <antcall target="jruby-test"/>
+
+
+  <antcall target="rake-db-setup">
+    <param name="rails.env" value="development"/>
+  </antcall>
+  <antcall target="rake-db-setup">
+    <param name="rails.env" value="production"/>
+  </antcall>
+  <antcall target="rake-db-migrate">
+    <param name="rails.env" value="development"/>
+  </antcall>
+  <antcall target="rake-db-migrate">
+    <param name="rails.env" value="production"/>
+  </antcall>
+  <antcall target="warble-war"/>
+</target>
+
+<target name="package">
+  <antcall target="prepare-source"/>
+  <antcall target="Gemfile-patch"/>
+  <antcall target="Gemfile-local"/>
+  <antcall target="Rakefile-patch"/>
+  <antcall target="script-patch"/>
+  <antcall target="config-database"/>
+
+  <antcall target="bundler-install"/>
+  <antcall target="warble-config"/>
+
+  <antcall target="jruby-test"/>
+
+
+  <antcall target="rake-db-setup">
+    <param name="rails.env" value="development"/>
+  </antcall>
+  <antcall target="rake-db-setup">
+    <param name="rails.env" value="production"/>
+  </antcall>
+  <antcall target="rake-db-migrate">
+    <param name="rails.env" value="development"/>
+  </antcall>
+  <antcall target="rake-db-migrate">
+    <param name="rails.env" value="production"/>
+  </antcall>
+  <antcall target="warble-war"/>
+</target>
+
+</project>

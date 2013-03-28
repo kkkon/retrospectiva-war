@@ -1,0 +1,162 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>jp.kkkon.retro-war</groupId>
+  <artifactId>2.0-stable</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Retrospectiva WAR 1.4-stable</name>
+
+  <scm>
+    <connection>scm:git:https://github.com/dim/retrospectiva.git</connection>
+    <url>https://github.com/dim/retrospectiva/</url>
+  </scm>
+
+  <build>
+    <finalName>retro</finalName>
+    <plugins>
+<!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scm-plugin</artifactId>
+        <version>1.8.1</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+            <artifactId>maven-scm-provider-svnjava</artifactId>
+            <version>2.0.5</version>
+          </dependency>
+        </dependencies>
+
+        <executions>
+          <execution>
+            <id>checkout</id>
+            <phase>generate-sources</phase>
+            <goals>
+                <goal>checkout</goal>
+            </goals>
+            <configuration>
+              <checkoutDirectory>${workingDirectory}</checkoutDirectory>
+              <skipCheckoutIfExists>true</skipCheckoutIfExists>
+            </configuration>
+          </execution>
+          <execution>
+            <id>update</id>
+            <phase>process-sources</phase>
+            <goals>
+                <goal>update</goal>
+            </goals>
+            <configuration>
+              <workingDirectory>${workingDirectory}</workingDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+-->
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>${jruby.version}</version>
+          </dependency>
+        </dependencies>
+
+        <executions>
+          <execution>
+            <id>invoke-ant</id>
+            <phase>package</phase>
+            <goals>
+                <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <property name="maven.compile.classpath" refid="maven.compile.classpath"/>
+                <property name="maven.runtime.classpath" refid="maven.runtime.classpath"/>
+                <property name="maven.test.classpath" refid="maven.test.classpath"/>
+                <property name="maven.plugin.classpath" refid="maven.plugin.classpath"/>
+                <echoproperties/>
+
+                <ant antfile="${basedir}/build.xml"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+
+        <executions>
+          <execution>
+            <phase>clean</phase>
+            <goals>
+                <goal>clean</goal>
+            </goals>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>extdist</directory>
+                  <includes>
+                    <include>jruby-*</include>
+                  </includes>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+                <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>${project.artifactId}</artifactId>
+              <version>${project.version}</version>
+              <packaging>war</packaging>
+              <createChecksum>true</createChecksum>
+              <generatePom>true</generatePom>
+              <file>${basedir}/target/redmine.war</file>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jruby.version>1.6.8</jruby.version>
+    <workingDirectory>${basedir}/target/checkout</workingDirectory>
+  </properties>
+</project>
