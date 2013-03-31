@@ -9,13 +9,15 @@
   <name>Retrospectiva WAR 2.0-stable</name>
 
   <scm>
-    <connection>scm:git:https://github.com/dim/retrospectiva.git</connection>
-    <url>https://github.com/dim/retrospectiva/</url>
+    <connection>scm:git:https://github.com/kkkon/retrospectiva.git</connection>
+    <tag>jruby16-ruby18</tag>
+    <url>https://github.com/kkkon/retrospectiva/</url>
   </scm>
 
   <build>
     <finalName>retro</finalName>
     <plugins>
+<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-plugin</artifactId>
@@ -52,6 +54,8 @@
           </execution>
         </executions>
       </plugin>
+-->
+
 
 
       <plugin>
