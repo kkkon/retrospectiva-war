@@ -270,7 +270,7 @@
 </target>
 
 <target name="Gemfile-patch">
-  <copy  file="${basedir}/src/main/ruby/Gemfile" tofile="${basedir}/target/checkout/Gemfile" overwrite="true"/>
+  <!--<copy  file="${basedir}/src/main/ruby/Gemfile" tofile="${basedir}/target/checkout/Gemfile" overwrite="true"/>-->
   <java
     classname="${jruby.classname}"
     classpath="${jruby.classpath}"
@@ -288,16 +288,6 @@
 
 <target name="Gemfile-local">
   <copy  file="${basedir}/src/main/patch/Gemfile1.8.local" tofile="${basedir}/target/checkout/Gemfile.local" overwrite="true"/>
-</target>
-
-<target name="Rakefile-patch">
-  <copy  file="${basedir}/src/main/ruby/Rakefile" tofile="${basedir}/target/checkout/Rakefile" overwrite="true"/>
-</target>
-
-<target name="script-patch">
-  <copy todir="${basedir}/target/checkout/script" overwrite="true">
-    <fileset dir="${basedir}/src/main/ruby/script"/>
-  </copy>
 </target>
 
 <target name="config-database">
@@ -415,7 +405,6 @@
   <antcall target="prepare-source"/>
   <antcall target="Gemfile-patch"/>
   <antcall target="Gemfile-local"/>
-  <antcall target="Rakefile-patch"/>
   <antcall target="config-database"/>
 
   <antcall target="bundler-install"/>

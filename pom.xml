@@ -10,14 +10,12 @@
 
   <scm>
     <connection>scm:git:https://github.com/kkkon/retrospectiva.git</connection>
-    <tag>jruby16-ruby18</tag>
     <url>https://github.com/kkkon/retrospectiva/</url>
   </scm>
 
   <build>
     <finalName>retro</finalName>
     <plugins>
-<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-plugin</artifactId>
@@ -40,6 +38,8 @@
             <configuration>
               <checkoutDirectory>${workingDirectory}</checkoutDirectory>
               <skipCheckoutIfExists>true</skipCheckoutIfExists>
+              <scmVersionType>branch</scmVersionType>
+              <scmVersion>jruby16-ruby18</scmVersion>
             </configuration>
           </execution>
           <execution>
@@ -54,7 +54,6 @@
           </execution>
         </executions>
       </plugin>
--->
 
 
 
@@ -160,5 +159,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jruby.version>1.6.8</jruby.version>
     <workingDirectory>${basedir}/target/checkout</workingDirectory>
+    <skipCheckoutIfExists>true</skipCheckoutIfExists>
+    <scmVersionType>branch</scmVersionType>
+    <scmVersion>jruby16-ruby18</scmVersion>
   </properties>
 </project>
