@@ -8,6 +8,22 @@
   <packaging>pom</packaging>
   <name>Retrospectiva WAR 2.0-stable</name>
 
+  <licenses>
+    <license>
+      <name>The MIT license</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>kkkon</id>
+      <name>Kiyofumi Kondoh</name>
+    </developer>
+  </developers>
+
+
   <scm>
     <connection>scm:git:https://github.com/kkkon/retrospectiva.git</connection>
     <url>https://github.com/kkkon/retrospectiva/</url>
